@@ -1,0 +1,36 @@
+#!/bin/sh
+###############################################################################
+# Program:
+# 		MOXA Linux driver installer
+#	
+# History:
+# 2009/09/11
+#
+# Author:
+# Ken Huang, ken.huang@moxa.com
+#
+# Discription:
+# The script install and load the MOXA Linux driver.
+#
+###############################################################################
+
+TARGET_DRIVER=mxu11x0
+MXVER=`awk '{if($1=="Version" && $2=="Number:"){print $3}}' version.txt`
+
+if lsmod | grep -q $TARGET_DRIVER ; then
+    echo "Found driver in system..."
+    echo "Unloading driver..."
+    rmmod $TARGET_DRIVER || exit 1
+    make clean
+    echo "Unload driver successfully."
+    echo ""
+fi
+
+if make install ; then
+    echo ""
+    echo "Loading driver..."
+    modprobe $TARGET_DRIVER || exit 1
+    echo "************************************************************************"
+    echo " MOXA UPort 11x0 series driver ver $MXVER loaded successfully."
+    echo "************************************************************************"
+fi
