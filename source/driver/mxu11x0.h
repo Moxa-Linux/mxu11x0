@@ -28,12 +28,14 @@
 
 /* Vendor and product ids */
 #define MXU1_VENDOR_ID				0x110a	
+#define MXU1_TI_VENDOR_ID			0x0451
 #define MXU1_1110_PRODUCT_ID			0x1110
 #define MXU1_1130_PRODUCT_ID			0x1130
 #define MXU1_1150_PRODUCT_ID			0x1150
 #define MXU1_1151_PRODUCT_ID			0x1151
 #define MXU1_1131_PRODUCT_ID			0x1131
 #define MXU1_3001_PRODUCT_ID			0x3001
+#define MXU1_TI_PRODUCT_ID			0x3410
 
 /* Model Name */
 #define MXU1_MODEL_1110				0x01
