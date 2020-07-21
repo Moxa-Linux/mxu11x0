@@ -1,0 +1,103 @@
+#!/bin/sh
+###############################################################################
+# Program:
+# 		MOXA Linux Environment Parameter Checker
+#	
+# History:
+# 2009/08/28
+#
+# Author:
+# Ken Huang, ken.huang@moxa.com
+#
+# Discription:
+# The script is to check some environment parameters before installing
+# MOXA Linux driver.
+# Make sure that the parameters are all set to install driver.
+#
+###############################################################################
+
+#Parameters
+MXUPORT_VERSION=`awk '{if($1=="Version" && $2=="Number:"){print $3}}' ../version.txt`
+MX_VERSION=4
+MX_PATCH_LEVEL=20
+MX_SUBLEVEL=17
+MX_RELEASE_DATE=`awk '{if($1=="Date:"){print $2}}' ../version.txt`
+MX_VERSION_CODE=$(( ($MX_VERSION<<16)+($MX_PATCH_LEVEL<<8)+$MX_SUBLEVEL ))
+MX_VERSION_MIN=$(( ($MX_VERSION<<16)+(0<<8)+0 ))
+
+K_MODULE_VERSION=$(uname -r)
+K_RELEASE=$(echo $K_MODULE_VERSION | sed -e "s/-.*//g")
+K_VERSION=$(echo $K_RELEASE | cut -d '.' -f 1)
+K_PATCH_LEVEL=$(echo $K_RELEASE | cut -d '.' -f 2)
+K_SUBLEVEL=$(echo $K_RELEASE | cut -d '.' -f 3)
+K_VERSION_CODE=$(( ($K_VERSION<<16)+($K_PATCH_LEVEL<<8)+$K_SUBLEVEL ))
+
+K_SOURCE=/lib/modules/$K_MODULE_VERSION/build
+LINUX_DIS=$(grep '[0-9]' /etc/issue )
+
+# Check if tusb3410 is already added into blacklist
+BLACKLIST_FILE=/etc/modprobe.d/blacklist.conf
+CHK_EXISTED=$(grep -s -c 'tusb3410 is disabled by moxa' $BLACKLIST_FILE)
+if [ $? -eq 2 ]; then
+    # If blacklist.conf not existed, let CHK_EXISTED=0 to create new file later.
+    CHK_EXISTED=0
+fi
+if [ "$CHK_EXISTED" -eq 0 ]; then
+    # Add tusb3410 into blacklist if it hasn't been added.
+    echo "# tusb3410 is disabled by moxa" >> $BLACKLIST_FILE
+    echo "blacklist ti_usb_3410_5052" >> $BLACKLIST_FILE
+fi
+
+#Check if path contains whitespace characters
+case $PWD in
+  *[[:space:]]*) 
+    echo "******************************************************************";
+    echo " Installation FAILED!";
+	echo " Please make sure there are no whitespace characters in the path."; 
+	echo "******************************************************************";
+	exit 1;;
+  *) ;;
+esac
+
+#Information
+echo "************************************************************************"
+echo " $LINUX_DIS $K_MODULE_VERSION"
+echo " MOXA UPort 11x0 series driver ver $MXUPORT_VERSION"
+echo " Release Date: $MX_RELEASE_DATE"
+echo "************************************************************************"
+
+#Check kernel source
+if test ! -d $K_SOURCE
+then
+echo "***********************************ERROR********************************"
+echo " Unable to locate matching source for kernel $K_MODULE_VERSION."
+echo " Please refer the readme.txt to install proper kernel-header/source."
+echo "************************************************************************"
+exit 1
+fi
+
+if test $MX_VERSION_MIN -gt $K_VERSION_CODE
+then
+echo "********************************WARNING**********************************"
+echo " MOXA UPort 11x0 series driver only support kernel $MX_VERSION.0"
+echo " or later versions."
+echo " That may not be compatible with Linux Kernel versions $K_MODULE_VERSION ."
+echo " To download the available driver, please visit Moxa at: http://www.moxa.com"
+echo " If you have questions, please contact Moxa support at: support@moxa.com"
+echo "*************************************************************************"
+echo "Press enter to continue..."
+read any
+fi
+
+#Check supported kernel version
+if test $K_VERSION_CODE -gt $MX_VERSION_CODE
+then
+echo "**********************************WARNING*******************************"
+echo " MOXA UPort 11x0 series driver hes been tested under kernel $MX_VERSION.$MX_PATCH_LEVEL.$MX_SUBLEVEL"
+echo " That may not be compatible with Linux Kernel version $K_MODULE_VERSION ."
+echo " To download the latest driver, please visit Moxa at: http://www.moxa.com "
+echo " If you have questions, please contact Moxa support at: support@moxa.com "
+echo "************************************************************************"
+echo "Press enter to continue..."
+read any
+fi

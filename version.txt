@@ -1,0 +1,71 @@
+Version Number: 4.0
+Product Line:   MOXA UPort 1100 Series 
+Platform:       Linux kernel 4.x(x86/x64)
+Company:        Moxa Inc.
+Date:           2019/11/06
+
+Support Product:
+================================
+UPort 1110/1130/1130I/1150/1150I
+USB Console
+
+Latest Tested Linux Distribution: 
+==================================
+CentOS 8.0.1905 x86_64 (4.18.0)
+Debian 9 x86 (4.9.0)
+Debian 10.1.0_x64 (4.19.67)
+Fedora 22 x86 (4.0.4)
+Fedora 25 x86 (4.8.6)
+Fedora 26 x86 (4.11.8)
+Fedora 29 x64 (4.18.16)
+openSUSE 42.1 x64 (4.1.12)
+openSUSE 42.3 x64 (4.4.76)
+Ubuntu 17.04 x64 (4.10.0)
+Ubuntu 18.10 x64 (4.18.0)
+Ubuntu 19.10
+Pi 2 with Raspbian (4.14.98)
+Pi 3 with Raspbian (4.14.71)
+Pi 4 with Raspbian (4.19.57)
+VM-Ubuntu 18.10 x64 (4.18.0)
+
+Release Note:
+===============================================================================
+Ver4.0
+1. Improve: Supports Virtual Machine, ESXi v6.7.0. Tested guest OS is listed
+            above.
+2. Change: Divided an independent driver version 4.0 to support Linux kernel
+           4.x.
+
+Ver1.4
+1. New: Add to support Moxa USB Console.
+2. Improved: Support Linux kernel up to 4.x, which include RHEL 7 and CentOS 7
+             (kernel 3.10.0). 
+3. Bugfix: Eliminated compile-time message "error: implicit declaration of
+           function 'signal_pending'" under kernel 4.11. 
+4. Bugfix: Eliminated garbled text displayed when enabled Parity bit on an
+           opened tty. 
+5. Bugfix: Fix installation problem when using multiple UPort devices at the
+           same time in kernel 3.11.
+6. Change: No support for kernel 2.x. 
+
+Ver1.3
+1. Support kernel upto 3.4.4
+2. Modify "mxu1_open" and "mxu1_close" function prototype.
+3. Modify "mxu1_ioctl", "mxu1_tiocmget" and "mxu1_tiocmset" function prototype
+4. Fix bug of DTR signal while setting baudrate to B0.
+
+Ver1.2 
+1. Add a new model UPort 1130I.
+2. Support kernel upto 2.6.29
+3. Fix bug of compiling fail on Kernel 2.6.24
+4. Fix bug of compiling fail on FC 2 2.6.5 
+5. Fix bug of installing driver with error -5 on 2.6.24.
+
+Ver1.1
+1. Add two new models UPort 1150, UPort 1150I.
+2. Add static driver installation guide to the readme.txt.
+
+Ver1.0
+1. Official released.
+
+-End-
