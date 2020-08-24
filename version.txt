@@ -1,13 +1,14 @@
-Version Number: 4.0
+Version Number: 4.0.2
 Product Line:   MOXA UPort 1100 Series 
 Platform:       Linux kernel 4.x(x86/x64)
 Company:        Moxa Inc.
-Date:           2019/11/06
+Date:           2020/08/19
 
 Support Product:
 ================================
 UPort 1110/1130/1130I/1150/1150I
 USB Console
+USB-to-Serial Port Driver
 
 Latest Tested Linux Distribution: 
 ==================================
@@ -30,6 +31,9 @@ VM-Ubuntu 18.10 x64 (4.18.0)
 
 Release Note:
 ===============================================================================
+Ver4.0.2
+1. Custom: Support Moxa USB-to-Serial Port Driver.
+
 Ver4.0
 1. Improve: Supports Virtual Machine, ESXi v6.7.0. Tested guest OS is listed
             above.

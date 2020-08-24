@@ -96,7 +96,7 @@ clean_local:
 	@rm -f .$(TARGET)*
 	@rm -f $(TARGET).ko
 	@rm -f .cache.mk
-	@rm -f *.o.ur-safe
+	@rm -f *.ur-safe
 
 rm_blacklist:
 	@if [ "$(BLACKLIST_CNT)" -gt 0 ]; then sed -i '$(BLACKLIST_LINE),~2d' $(BLACKLIST_FILE); fi

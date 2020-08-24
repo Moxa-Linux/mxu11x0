@@ -41,9 +41,13 @@ disk:
 	@echo "\"" >> $(MX_VER_H)
 	@echo "#endif" >> $(MX_VER_H)
 	@echo "New $(MX_VER_H) is created."
+	rm -rf ../disk/mxu11x0
 	rm -rfi ../disk/*
+	mkdir ../disk/mxu11x0
+	cp -R * ../disk/mxu11x0
 	cp -f version.txt ../disk
 	cp -f readme.txt ../disk
-	tar -cvzf ../disk/driv_linux_uport1p_v$(MX_BUILD_VER)_build_$(MX_CURR_DATE).tgz ../source
+	tar -C ../disk -cvzf ../disk/driv_linux_uport1p_v$(MX_BUILD_VER)_build_$(MX_CURR_DATE).tgz mxu11x0
+	rm -rf ../disk/mxu11x0
 	@echo "Done"
 

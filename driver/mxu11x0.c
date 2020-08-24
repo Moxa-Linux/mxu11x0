@@ -49,6 +49,7 @@
 #include "mxu1150_fw.h"
 #include "mxu1151_fw.h"
 #include "mxu3001_fw.h"
+#include "mxu7001_fw.h"
 #include "mx_ver.h"
 
 /* Defines */
@@ -203,6 +204,7 @@ static struct usb_device_id mxu1_id_table[] = {
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1151_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_1131_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_3001_PRODUCT_ID) },
+	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_7001_PRODUCT_ID) },
 	{ USB_DEVICE(MXU1_TI_VENDOR_ID, MXU1_TI_PRODUCT_ID) },
 	{ }
 };
@@ -234,6 +236,11 @@ static struct usb_device_id mxu1131_id_table[] = {
 
 static struct usb_device_id mxu3001_id_table[] = {
 	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_3001_PRODUCT_ID) },
+	{ }
+};
+
+static struct usb_device_id mxu7001_id_table[] = {
+	{ USB_DEVICE(MXU1_VENDOR_ID, MXU1_7001_PRODUCT_ID) },
 	{ }
 };
 
@@ -468,9 +475,48 @@ static struct usb_serial_driver mxu3001_1port_device = {
 #endif
 };
 
+static struct usb_serial_driver mxu7001_1port_device = {
+	.driver={
+		.owner		= THIS_MODULE,
+		.name		= "mxu7001",
+	},
+	.description		= "MOXA USB-to-Serial Port Driver",
+	.id_table		= mxu7001_id_table,
+	.num_ports		= 1,
+	.attach			= mxu1_startup,
+#ifdef ASYNCB_FIRST_KERNEL
+	.disconnect		= mxu1_disconnect,
+	.release		= mxu1_release,
+#else
+	.shutdown		= mxu1_shutdown,
+#endif
+	.open			= mxu1_open,
+	.close			= mxu1_close,
+	.write			= mxu1_write,
+	.write_room		= mxu1_write_room,
+	.chars_in_buffer	= mxu1_chars_in_buffer,
+	.throttle		= mxu1_throttle,
+	.unthrottle		= mxu1_unthrottle,
+	.ioctl			= mxu1_ioctl,
+	.set_termios		= mxu1_set_termios,
+	.tiocmget		= mxu1_tiocmget,
+	.tiocmset		= mxu1_tiocmset,
+	.get_icount		= mxu1_get_icount,
+	.break_ctl		= mxu1_break,
+	.read_int_callback	= mxu1_interrupt_callback,
+	.read_bulk_callback	= mxu1_bulk_in_callback,
+	.write_bulk_callback	= mxu1_bulk_out_callback,
+	.wait_until_sent = mxul_wait_until_sent,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,20,0))
+	.get_serial = mxu1_get_serial_info2,
+	.set_serial = mxu1_set_serial_info2
+#endif
+};
+
 static struct usb_serial_driver * const serial_drivers[] = {
 	&mxu1110_1port_device, &mxu1130_1port_device, &mxu1150_1port_device,
-	&mxu1151_1port_device, &mxu1131_1port_device, &mxu3001_1port_device, NULL
+	&mxu1151_1port_device, &mxu1131_1port_device, &mxu3001_1port_device,
+	&mxu7001_1port_device, NULL
 };
 
 /* Module */
@@ -487,6 +533,7 @@ MODULE_DEVICE_TABLE(usb, mxu1150_id_table);
 MODULE_DEVICE_TABLE(usb, mxu1151_id_table);
 MODULE_DEVICE_TABLE(usb, mxu1131_id_table);
 MODULE_DEVICE_TABLE(usb, mxu3001_id_table);
+MODULE_DEVICE_TABLE(usb, mxu7001_id_table);
 
 /* Functions */
 
@@ -607,6 +654,9 @@ static int mxu1_startup(struct usb_serial *serial)
 		case MXU1_3001_PRODUCT_ID:
 			mxdev->mxd_model_name = MXU1_MODEL_3001;
 			break;
+		case MXU1_7001_PRODUCT_ID:
+			mxdev->mxd_model_name = MXU1_MODEL_7001;
+			break;
 		default:
 			return -ENODEV;
 	}
@@ -634,8 +684,11 @@ static int mxu1_startup(struct usb_serial *serial)
 			case MXU1_MODEL_3001:
 			status = mxu1_download_firmware(mxdev, mxu3001FWImage, sizeof(mxu3001FWImage));
 				break;
+			case MXU1_MODEL_7001:
+			status = mxu1_download_firmware(mxdev, mxu7001FWImage, sizeof(mxu7001FWImage));
+				break;
 		}
-			
+
 		if (status)
 			goto free_mxdev;
 
@@ -671,12 +724,15 @@ static int mxu1_startup(struct usb_serial *serial)
 		mxport->mxp_port = serial->port[i];
 		mxport->mxp_mxdev = mxdev;
 		usb_set_serial_port_data(serial->port[i], mxport);
-		if(mxdev->mxd_model_name != MXU1_MODEL_1130 && mxdev->mxd_model_name != MXU1_MODEL_1131){ //UPort 1110, 1150, 1150I, 3001
-			mxport->mxp_uart_mode = MXU1_UART_232;
-		}
-		else{ //UPort 1130
+		if(mxdev->mxd_model_name == MXU1_MODEL_1130 ||
+		   mxdev->mxd_model_name == MXU1_MODEL_1131 ||
+		   mxdev->mxd_model_name == MXU1_MODEL_7001)
+		{
 			mxport->mxp_uart_mode = MXU1_UART_485_RECEIVER_DISABLED;
 			mxport->mxp_user_get_uart_mode = MXU1_RS4852W;
+		}
+		else{
+			mxport->mxp_uart_mode = MXU1_UART_232;
 		}
 	}
 	
@@ -1671,7 +1727,6 @@ static void mxu1_send(struct mxu1_port *mxport)
 	int count, result;
 	struct usb_serial_port *port = mxport->mxp_port;
 	struct tty_struct *tty = port->port.tty;
-
 	unsigned long flags;
 
 	dbg("%s - port %d", __FUNCTION__, port->port_number);

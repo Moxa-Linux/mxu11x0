@@ -3,7 +3,7 @@
     for Linux Kernel 4.x
     Copyright (C) 2019, Moxa Inc.
 =============================================================================
-Date: 07/04/2019
+Date: 08/19/2020
 
 CONTENTS
 
@@ -43,6 +43,7 @@ CONTENTS
     - UPort 1150I, 1 port RS-232/422/485 USB to Serial Hub with isolation
       protection.
     - USB Console, 1 port RS-232 USB to Serial Hub.
+    - USB-to-Serial Port Driver, 1 port RS-232/422/485 USB to Serial Hub
 
    This driver supports x86 and x64(AMD64/EM64T) hardware platform. In 
    order to maintain compatibility, this version has also been properly 
@@ -135,8 +136,7 @@ CONTENTS
        3.3.2 Load the MOXA driver  
 
           The driver will be loaded automatically while pluging the 
-          UPort 1110/1130/1130I/1150/1150I or USB console cable
-          into you PC. Besides, you can load the driver manually.
+          UPort into you PC. Besides, you can load the driver manually.
   
           # modprobe mxu11x0 
 
@@ -160,6 +160,7 @@ CONTENTS
           # ln -s /moxa/mxu11x0/driver/mxu1150_fw.h mxu1150_fw.h
           # ln -s /moxa/mxu11x0/driver/mxu1151_fw.h mxu1151_fw.h
           # ln -s /moxa/mxu11x0/driver/mxu3001_fw.h mxu3001_fw.h
+          # ln -s /moxa/mxu11x0/driver/mxu7001_fw.h mxu7001_fw.h
 
        3.4.2 Modify kernel configuration file.
           Add the following line into configuration file.
@@ -226,10 +227,10 @@ CONTENTS
    http://sourceforge.net/projects/setserial/ .
 
    MOXA UPort 1130/1130I provides three interfaces(RS-485 2W, RS-485 4W, RS-422) 
-   and UPort 1150/1150I provides four interfaces(RS-232, RS-485 2W, RS-485 4W,
-   RS-422). If you want to switch different interface, you can execute the
-   setserial command to set the port's interface. The supported parameter is
-   listed below.
+   and UPort 1150/1150I/USB-to-Serial Port Driver provides four interfaces
+   (RS-232, RS-485 2W, RS-485 4W, RS-422). If you want to switch different
+   interface, you can execute the setserial command to set the port's interface.
+   The supported parameter is listed below.
 
    parameter   value   interface
 
@@ -251,9 +252,8 @@ CONTENTS
       If you want to install more than one UPort USB serial Hub, the best
       way is to connect to USB port directly. In lab test, four USB ports 
       with four UPorts still work very well. If we connect to USB hub, the
-      throughput will be dropped down. To get good performance,please
-      connecting UPort 1110/1130/1150/1150I or USB console to USB port 
-      directly .    
+      throughput will be dropped down. To get good performance, please
+      connecting UPort to USB host directly .
 
    2. Compile error
       To build Moxa driver, it needs kernel header files. If you got

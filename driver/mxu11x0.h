@@ -36,6 +36,7 @@
 #define MXU1_1131_PRODUCT_ID			0x1131
 #define MXU1_3001_PRODUCT_ID			0x3001
 #define MXU1_TI_PRODUCT_ID			0x3410
+#define MXU1_7001_PRODUCT_ID			0x7001
 
 /* Model Name */
 #define MXU1_MODEL_1110				0x01
@@ -44,6 +45,8 @@
 #define MXU1_MODEL_1151				0x04
 #define MXU1_MODEL_1131				0x05
 #define MXU1_MODEL_3001				0x06
+#define MXU1_MODEL_7001				0x07
+
 /* Commands */
 #define MXU1_GET_VERSION			0x01
 #define MXU1_GET_PORT_STATUS			0x02
