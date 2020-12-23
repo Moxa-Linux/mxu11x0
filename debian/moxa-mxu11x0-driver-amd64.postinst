@@ -1,0 +1,39 @@
+#!/bin/sh
+# See deb-postinst(5).
+
+set -e
+
+KVER="4.19.0-13-amd64"
+
+# Ensure modules.dep is update
+update_moddep() {
+	depmod ${KVER}
+}
+
+# Add module to initrd to early probe driver to avoid probe failed
+# e.g. "mxu11x0: probe of 1-10.2:1.0 failed with error -71"
+add_initrd() {
+	local INITRD_CONF="/etc/initramfs-tools/modules"
+	if ! grep -q 'mxu11x0' $INITRD_CONF
+	then
+		echo "mxu11x0" >> $INITRD_CONF
+	fi
+	update-initramfs -u -k ${KVER}
+}
+
+case "$1" in
+configure)
+	update_moddep
+	add_initrd
+	;;
+
+abort-upgrade | abort-deconfigure | abort-remove) ;;
+
+*)
+	echo "$0 called with unknown argument '$1'" 1>&2
+	exit 1
+	;;
+esac
+
+#DEBHELPER#
+exit 0

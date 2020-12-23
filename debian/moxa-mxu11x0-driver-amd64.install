@@ -1,0 +1,3 @@
+driver/mxu11x0.ko /lib/modules/4.19.0-13-amd64/kernel/drivers/usb/serial
+moxa-mxu11x0.conf /usr/lib/modules-load.d
+tusb3410-blacklist.conf /lib/modprobe.d
