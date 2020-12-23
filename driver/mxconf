@@ -66,16 +66,6 @@ echo " MOXA UPort 11x0 series driver ver $MXUPORT_VERSION"
 echo " Release Date: $MX_RELEASE_DATE"
 echo "************************************************************************"
 
-#Check kernel source
-if test ! -d $K_SOURCE
-then
-echo "***********************************ERROR********************************"
-echo " Unable to locate matching source for kernel $K_MODULE_VERSION."
-echo " Please refer the readme.txt to install proper kernel-header/source."
-echo "************************************************************************"
-exit 1
-fi
-
 if test $MX_VERSION_MIN -gt $K_VERSION_CODE
 then
 echo "********************************WARNING**********************************"
