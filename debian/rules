@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+KVER=4.19.0-13-amd64
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	$(MAKE) KVER=$(KVER) driver_make
+
+override_dh_auto_install:
+	$(info Skip dh_auto_install)
+
+override_dh_auto_clean:
+	$(MAKE) KVER=$(KVER) clean
+
+override_dh_strip:
+	dh_strip --no-automatic-dbgsym

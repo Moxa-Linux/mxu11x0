@@ -1,0 +1,43 @@
+variables:
+    GIT_DEPTH: "1"
+
+stages:
+    - mil-internal-release_build
+    - prepare_mil-internal-release_debs
+
+mil-internal-release_build:
+    tags:
+        - Runner-Buster
+    stage: mil-internal-release_build
+    before_script:
+        - echo "deb http://mil-internal-apt:8080/mirror-debian_20201211/debian/ buster main" > /etc/apt/sources.list
+        - curl -fsSL http://mil-internal-apt:8080/mil_internal_apt.gpg | apt-key add -
+        - apt-get update
+        - apt-get install -y -qq --no-install-recommends linux-headers-4.19.0-13-amd64
+        - apt-get build-dep ./ -y
+    script:
+        - dpkg-buildpackage -us -uc -b
+        - mv ../*.buildinfo .
+        - mv ../*.changes .
+        - mv ../*.deb .
+    artifacts:
+        name: "${CI_PROJECT_NAME}"
+        paths:
+        - ./*.buildinfo
+        - ./*.changes
+        - ./*.deb
+
+prepare_mil-internal-release_debs:
+    tags:
+        - Runner-Buster
+    stage: prepare_mil-internal-release_debs
+    only:
+      refs:
+        - buster/master
+    dependencies:
+        - mil-internal-release_build
+    when: manual
+    script:
+        - mkdir -p /cache/buster/mil-internal-release/
+        - cp *.deb /cache/buster/mil-internal-release/
+        - ls /cache/buster/mil-internal-release/
