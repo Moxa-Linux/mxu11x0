@@ -33,7 +33,7 @@ prepare_mil-internal-release_debs:
     stage: prepare_mil-internal-release_debs
     only:
       refs:
-        - buster/master
+        - buster-4.19.0-amd64/master
     dependencies:
         - mil-internal-release_build
     when: manual
