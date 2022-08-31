@@ -75,6 +75,10 @@
 #define MXU1_READ_URB_STOPPING	1
 #define MXU1_READ_URB_STOPPED	2
 
+/* Due to the deprecated function 'shutdown' in struct usb_serial_driver, */
+/* which might cause a build error in Debian 10, force to use ASYNCB_FIRST_KERNEL */
+/* to replace shutdown callback function. */
+#define ASYNCB_FIRST_KERNEL
 
 /* Structures */
 
