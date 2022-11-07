@@ -130,8 +130,13 @@ static int mxu1_open(struct tty_struct *tty, struct usb_serial_port *port);
 static void mxu1_close(struct usb_serial_port *port);
 
 static int mxu1_write(struct tty_struct *tty, struct usb_serial_port *port, const unsigned char *data,int count);
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,0,0))
+static unsigned int mxu1_write_room(struct tty_struct *tty);
+static unsigned int mxu1_chars_in_buffer(struct tty_struct *tty);
+#else
 static int mxu1_write_room(struct tty_struct *tty);
 static int mxu1_chars_in_buffer(struct tty_struct *tty);
+#endif
 static void mxu1_throttle(struct tty_struct *tty);
 static void mxu1_unthrottle(struct tty_struct *tty);
 static int mxu1_ioctl(struct tty_struct *tty, unsigned int cmd, unsigned long arg);
